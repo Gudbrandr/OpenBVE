@@ -252,7 +252,7 @@ namespace OpenBve {
 						for (int i = 0; i < TrainManager.Trains.Length; i++) {
 							if (TrainManager.Trains[i] != null && TrainManager.Trains[i].Plugin != null) {
 								if (TrainManager.Trains[i].Plugin.LastException != null) {
-									CrashHandler.LoadingCrash(ex.Message, true);
+									CrashHandler.LoadingCrash(ex.ToString(), true);
 									MessageBox.Show("The train plugin " + TrainManager.Trains[i].Plugin.PluginTitle + " caused a runtime exception: " + TrainManager.Trains[i].Plugin.LastException.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 									found = true;
 									RestartArguments = "";

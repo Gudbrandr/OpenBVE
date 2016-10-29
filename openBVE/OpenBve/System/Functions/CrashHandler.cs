@@ -146,6 +146,82 @@ namespace OpenBve
 
         }
 
+		/// <summary>This function logs an unhandled crash to disk</summary>
+		internal static void PluginCrash(string ExceptionText)
+		{
+			
+			Program.AppendToLogFile("WARNING: Train plugin " + TrainManager.PlayerTrain.Plugin.PluginTitle + " crashed. Creating CrashLog file: " + CrashLog);
+			MessageBox.Show("Train plugin " + TrainManager.PlayerTrain.Plugin.PluginTitle + " crashed and has been unloaded. \r\n Some train features may no longer work.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+			using (StreamWriter outputFile = new StreamWriter(CrashLog))
+			{
+				//Basic information
+				outputFile.WriteLine(DateTime.Now);
+				outputFile.WriteLine("OpenBVE " + Application.ProductVersion + " Crash Log");
+				var Platform = "Unknown";
+				if (OpenTK.Configuration.RunningOnWindows)
+				{
+					Platform = "Windows";
+				}
+				else if (OpenTK.Configuration.RunningOnLinux)
+				{
+					Platform = "Linux";
+				}
+				else if (OpenTK.Configuration.RunningOnMacOS)
+				{
+					Platform = "MacOS";
+				}
+				else if (OpenTK.Configuration.RunningOnSdl2)
+				{
+					Platform = "SDL2";
+				}
+				outputFile.WriteLine("Program is running on the " + Platform + " backend");
+				if (Interface.CurrentOptions.FullscreenMode)
+				{
+					outputFile.WriteLine("Current screen resolution is: Full-screen " + Interface.CurrentOptions.FullscreenWidth + "px x " + Interface.CurrentOptions.FullscreenHeight + "px " + Interface.CurrentOptions.FullscreenBits + "bit color-mode");
+				}
+				else
+				{
+					outputFile.WriteLine("Current screen resolution is: Windowed " + Interface.CurrentOptions.WindowWidth + "px x " + Interface.CurrentOptions.WindowHeight + "px ");
+				}
+				//Route and train
+				if (Game.RouteInformation.RouteFile != null)
+				{
+					outputFile.WriteLine("Current routefile is: " + Game.RouteInformation.RouteFile);
+				}
+				if (Game.RouteInformation.TrainFolder != null)
+				{
+					outputFile.WriteLine("Current train is: " + Game.RouteInformation.TrainFolder);
+				}
+				if (TrainManager.PlayerTrain != null)
+				{
+					outputFile.WriteLine("Current train plugin is: " + TrainManager.PlayerTrain.Plugin.PluginTitle);
+				}
+				//Errors and Warnings
+				if (Game.RouteInformation.FilesNotFound != null)
+				{
+					outputFile.WriteLine(Game.RouteInformation.FilesNotFound);
+				}
+				if (Game.RouteInformation.ErrorsAndWarnings != null)
+				{
+					outputFile.WriteLine(Game.RouteInformation.ErrorsAndWarnings);
+				}
+				//Track position and viewing distance
+				outputFile.WriteLine("Current track position is: " + World.CameraTrackFollower.TrackPosition.ToString("0.00", Culture) + " m");
+				outputFile.WriteLine("Current viewing distance is: " + Interface.CurrentOptions.ViewingDistance);
+				outputFile.WriteLine("The train plugin raised the following exception, and was unloaded: ");
+				outputFile.WriteLine(ExceptionText);
+				double MemoryUsed;
+				using (Process proc = Process.GetCurrentProcess())
+				{
+					MemoryUsed = proc.PrivateMemorySize64;
+				}
+				outputFile.WriteLine("Current program memory usage: " + Math.Round((MemoryUsed / 1024 / 1024), 2) + "mb");
+				var freeRamCounter = new PerformanceCounter("Memory", "Available MBytes");
+				outputFile.WriteLine("System memory free: " + freeRamCounter.NextValue() + "mb");
+			}
+
+		}
+
         /// <summary>This function logs an exception caught whilst loading a route/ train to disk</summary>
         internal static void LoadingCrash(string ExceptionText, bool Train)
         {

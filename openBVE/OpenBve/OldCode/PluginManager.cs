@@ -199,14 +199,7 @@ namespace OpenBve {
 					}
 					this.PluginValid = false;
 				}
-//				if (handles.BrakeNotch != 0) {
-//					if (virtualHandles) {
-//						this.Train.Specs.CurrentPowerNotch.Safety = 0;
-//					}
-//				}
-				/*
-				 * Process the brakes.
-				 * */
+
 				if (virtualHandles) {
 					this.Train.Specs.CurrentEmergencyBrake.Safety = false;
 					this.Train.Specs.CurrentHoldBrake.Actual = false;
