@@ -127,6 +127,7 @@ namespace OpenBve {
 
 			// --- load options and controls ---
 			Interface.LoadOptions();
+			
 			//Switch between SDL2 and native backends; use native backend by default
 			var options = new ToolkitOptions();	
 			if (Interface.CurrentOptions.PreferNativeBackend)
@@ -151,6 +152,7 @@ namespace OpenBve {
 					//Environment.Exit(0);
 				}
 			}
+			PluginManager.LoadBlackListDatabase(OpenBveApi.Path.CombineFile(Program.FileSystem.GetDataFolder("PluginDatabase"), "blacklist.xml"));
 			Interface.LoadControls(null, out Interface.CurrentControls);
 			{
 				string folder = Program.FileSystem.GetDataFolder("Controls");

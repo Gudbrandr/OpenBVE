@@ -514,6 +514,10 @@ namespace OpenBve {
 				Interface.AddMessage(Interface.MessageType.Error, true, "The train plugin " + pluginTitle + " could not be found.");
 				return false;
 			}
+			if (PluginManager.CheckBlackList(pluginFile, trainFolder))
+			{
+				return false;
+			}
 			/*
 			 * Unload plugin if already loaded.
 			 * */

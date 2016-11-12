@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openBVE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TrainPlugins>
+	<!-- Sample plugin blacklist entry:
+		<Blacklist>
+		The name of the file
+			<FileName>BVEC_ATS.dll</FileName>
+		The file length in bytes
+			<FileLength>303104</FileLength>
+		The MD5 sum of the file
+			<MD5>MVUpFxadvj9N+laml0KxIA==</MD5>
+		A brief textual reason as to why this plugin is blacklisted
+			<Reason>Plugin crashes on startup</Reason>
+		</Blacklist>
+	-->
+	</TrainPlugins>
+	
+</openBVE>
