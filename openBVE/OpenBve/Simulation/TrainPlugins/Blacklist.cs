@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
-using System.Windows.Forms;
 using System.Xml;
+#pragma warning disable 660,661
 
 namespace OpenBve
 {
 	internal static partial class PluginManager
 	{
-		internal struct PluginEntry
+		internal struct BlackListEntry
 		{
 			/// <summary>The file length of the blacklisted plugin</summary>
 			internal double FileLength;
@@ -22,10 +22,19 @@ namespace OpenBve
 			/// <summary>A textual string describing the reason this plugin is blacklisted</summary>
 			internal string Reason;
 
+			public static bool operator ==(BlackListEntry a, BlackListEntry b)
+			{
+				return a.Equals(b);
+			}
+
+			public static bool operator !=(BlackListEntry a, BlackListEntry b)
+			{
+				return !(a == b);
+			}
 		}
 
 		/// <summary>The currently blacklisted plugins</summary>
-		internal static List<PluginEntry> BlackListedPlugins;
+		internal static List<BlackListEntry> BlackListedPlugins;
 
 		/// <summary>Checks whether the specified plugin is blacklisted</summary>
 		/// <returns>True if blacklisted, false otherwise</returns>
@@ -69,6 +78,24 @@ namespace OpenBve
 			return false;
 		}
 
+		/// <summary>Checks whether the specified plugin entry is in the blacklist database</summary>
+		/// <param name="plugin">The plugin entry</param>
+		internal static bool CheckBlackList(BlackListEntry plugin)
+		{
+			if (BlackListedPlugins.Count == 0)
+			{
+				return false;
+			}
+			for (int i = 0; i < BlackListedPlugins.Count; i++)
+			{
+				if (plugin == BlackListedPlugins[i])
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/// <summary>Loads the database of blacklisted plugins from disk</summary>
 		/// <param name="databasePath">The database path</param>
 		internal static void LoadBlackListDatabase(string databasePath)
@@ -77,9 +104,9 @@ namespace OpenBve
 			{
 				return;
 			}
-			BlackListedPlugins = new List<PluginEntry>();
+			BlackListedPlugins = new List<BlackListEntry>();
 			XmlDocument currentXML = new XmlDocument();
-			//Load the object's XML file 
+			//Load the XML file 
 			currentXML.Load(databasePath);
 			if (currentXML.DocumentElement != null)
 			{
@@ -91,7 +118,7 @@ namespace OpenBve
 					{
 						if (n.HasChildNodes)
 						{
-							PluginEntry p = new PluginEntry();
+							BlackListEntry p = new BlackListEntry();
 							bool ch = false;
 							foreach (XmlNode c in n.ChildNodes)
 							{

@@ -133,6 +133,7 @@
     <Compile Include="Simulation\TrainManager\Passengers.cs" />
     <Compile Include="Simulation\TrainManager\Station.cs" />
     <Compile Include="Simulation\TrainPlugins\Blacklist.cs" />
+    <Compile Include="Simulation\TrainPlugins\CompatibleReplacement.cs" />
     <Compile Include="Simulation\World\Background.cs" />
     <Compile Include="Simulation\World\Transformations.cs" />
     <Compile Include="System\Functions\CrashHandler.cs" />
