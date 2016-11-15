@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openBVE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TrainPlugins>
+	<Replacements>
+		<Plugin>
+			<FileName>OS_ATS.dll</FileName>
+			<FileLength>32768</FileLength>
+			<MD5>9p9P+6TcNkldLdv8wyhUTg==</MD5>
+			<Reason>Cross platform compatibility</Reason>
+		</Plugin>
+		<Name>BVE Cornwall ATS</Name>
+		<Path>Plugins\Train\BVEC_ATS.dll</Path>		
+	</Replacements>
+	</TrainPlugins>
+	
+</openBVE>

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -34,17 +36,50 @@ namespace OpenBve
 			}
 			var f = System.IO.Path.GetDirectoryName(PluginPath);
 			var fl = System.IO.Path.GetFileName(PluginPath);
+			if (fl == "OpenBveAts.dll")
+			{
+				return false;
+			}
 			for (int i = 0; i < AvailableReplacementPlugins.Count; i++)
 			{
-				if (AvailableReplacementPlugins[i].Train == null || AvailableReplacementPlugins[i].Train == fl)
+				if (AvailableReplacementPlugins[i].Train == null || AvailableReplacementPlugins[i].Train == f)
 				{
 					if (CheckBlackList(AvailableReplacementPlugins[i].OriginalPlugin))
 					{
-						Interface.AddMessage(Interface.MessageType.Error, true, "The train plugin " + fl + " has been replaced with the following compatible alternative: " + 
+						//If original plugin is in the blacklist
+						Interface.AddMessage(Interface.MessageType.Warning, true, "The blacklisted train plugin " + fl + " has been replaced with the following compatible alternative: " + 
 						AvailableReplacementPlugins[i].PluginName);
-						PluginPath = AvailableReplacementPlugins[i].PluginPath;
-						MessageBox.Show(AvailableReplacementPlugins[i].Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+						PluginPath = OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, AvailableReplacementPlugins[i].PluginPath);
+						if (AvailableReplacementPlugins[i].Message != string.Empty)
+						{
+							MessageBox.Show(AvailableReplacementPlugins[i].Message, Application.ProductName, MessageBoxButtons.OK,
+								MessageBoxIcon.Information);
+						}
 						return true;
+					}
+
+					//Not in the blacklist, so check plugin length etc.
+					var fi = new FileInfo(PluginPath);
+					if (fi.Length == AvailableReplacementPlugins[i].OriginalPlugin.FileLength)
+					{
+						var md5 = MD5.Create();
+						using (var stream = File.OpenRead(PluginPath))
+						{
+							md5.ComputeHash(stream);
+						}
+						string s = Convert.ToBase64String(md5.Hash);
+						if (s.ToLowerInvariant() == AvailableReplacementPlugins[i].OriginalPlugin.MD5.ToLowerInvariant())
+						{
+							Interface.AddMessage(Interface.MessageType.Warning, true, "The train plugin " + fl + " has been replaced with the following compatible alternative: " +
+							AvailableReplacementPlugins[i].PluginName);
+							PluginPath = OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, AvailableReplacementPlugins[i].PluginPath);
+							if (AvailableReplacementPlugins[i].Message != string.Empty)
+							{
+								MessageBox.Show(AvailableReplacementPlugins[i].Message, Application.ProductName, MessageBoxButtons.OK,
+									MessageBoxIcon.Information);
+							}
+							return true;
+						}
 					}
 				}
 			}
@@ -85,7 +120,7 @@ namespace OpenBve
 										{
 											BlackListEntry p = new BlackListEntry();
 											bool ch = false;
-											foreach (XmlNode cn in n.ChildNodes)
+											foreach (XmlNode cn in c.ChildNodes)
 											{
 												switch (cn.Name.ToLowerInvariant())
 												{

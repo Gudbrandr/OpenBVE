@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Windows.Forms;
 using OpenBveApi.Colors;
 using OpenBveApi.Runtime;
 
@@ -516,8 +517,13 @@ namespace OpenBve {
 			}
 			if (PluginManager.CheckBlackList(pluginFile, trainFolder))
 			{
-				return false;
+				//Check for a compatible replacement for this blacklisted plugin
+				if (!PluginManager.FindReplacementPlugin(ref pluginFile))
+				{
+					return false;
+				}
 			}
+			
 			/*
 			 * Unload plugin if already loaded.
 			 * */
@@ -595,6 +601,17 @@ namespace OpenBve {
 			}
 			if (!Program.CurrentlyRunningOnWindows | IntPtr.Size != 4) {
 				Interface.AddMessage(Interface.MessageType.Warning, false, "The train plugin " + pluginTitle + " can only be used on 32-bit Microsoft Windows or compatible.");
+				if (Interface.CurrentOptions.UseCompatiblePlugins)
+				{
+					if (!PluginManager.FindReplacementPlugin(ref pluginFile) && pluginTitle != "OpenBveAts.dll")
+					{
+						Interface.AddMessage(Interface.MessageType.Warning, false, "No compatible replacement was found.");
+					}
+					else
+					{
+						return LoadPlugin(train, pluginFile, trainFolder);
+					}
+				}
 				return false;
 			}
 		    if (Program.CurrentlyRunningOnWindows && !System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\AtsPluginProxy.dll"))

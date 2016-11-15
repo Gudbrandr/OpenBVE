@@ -258,15 +258,21 @@ namespace OpenBve {
 		/// <param name="ex">The exception raised</param>
 		internal void Crash(Exception ex)
 		{
-			base.LastException = ex;
-			CrashHandler.PluginCrash(ex.ToString());
-			Unload();
-			for (int i = 0; i < TrainManager.Trains.Length; i++)
+			try
 			{
-				if (TrainManager.Trains[i].Plugin.PluginTitle == base.PluginTitle)
+				base.LastException = ex;
+				CrashHandler.PluginCrash(ex.ToString());
+				Unload();
+				for (int i = 0; i < TrainManager.Trains.Length; i++)
 				{
-					TrainManager.Trains[i].Plugin = null;
+					if (TrainManager.Trains[i].Plugin.PluginTitle == base.PluginTitle)
+					{
+						TrainManager.Trains[i].Plugin = null;
+					}
 				}
+			}
+			catch
+			{
 			}
 		}
 
