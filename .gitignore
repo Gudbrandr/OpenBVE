@@ -17,7 +17,14 @@ bin_release/
 obj/
 linuxbuild.*
 macbuild.*
-mac/
+/mac/
+installers/debian.deb
+
+#Debian Build directory
+installers/debian/usr/lib/*
+
+#Gedit temporary files
+*~
 
 # Misc. Visual Studio files
 *.sdf

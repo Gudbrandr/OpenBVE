@@ -106,6 +106,8 @@ namespace OpenBve
 			internal bool Collisions;
 			/// <summary>Whether derailments are enabled</summary>
 			internal bool Derailments;
+			/// <summary>Whether loading sway is added</summary>
+			internal bool LoadingSway;
 			/// <summary>Whether the black-box data logger is enabled</summary>
 			internal bool BlackBox;
 			/// <summary>Whether joystick support is enabled</summary>
@@ -197,6 +199,7 @@ namespace OpenBve
 				this.Toppling = true;
 				this.Collisions = true;
 				this.Derailments = true;
+				this.LoadingSway = false;
 				this.GameMode = GameMode.Normal;
 				this.BlackBox = false;
 				this.UseJoysticks = true;
@@ -238,9 +241,19 @@ namespace OpenBve
 		/// <summary>Loads the options file from disk</summary>
 		internal static void LoadOptions()
 		{
+			string OptionsDir = OpenBveApi.Path.CombineDirectory(Program.FileSystem.SettingsFolder, "1.5.0");
+			if (!System.IO.Directory.Exists(OptionsDir))
+			{
+				System.IO.Directory.CreateDirectory(OptionsDir);
+			}
 			CurrentOptions = new Options();
 			CultureInfo Culture = CultureInfo.InvariantCulture;
-			string File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "options.cfg");
+			string File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "1.5.0/options.cfg");
+			if (!System.IO.File.Exists(File))
+			{
+				//Attempt to load and upgrade a prior configuration file
+				File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "options.cfg");
+			}
 			if (System.IO.File.Exists(File))
 			{
 				// load options
@@ -481,6 +494,9 @@ namespace OpenBve
 											break;
 										case "derailments":
 											Interface.CurrentOptions.Derailments = string.Compare(Value, "false", StringComparison.OrdinalIgnoreCase) != 0;
+											break;
+										case "loadingsway":
+											Interface.CurrentOptions.LoadingSway = string.Compare(Value, "false", StringComparison.OrdinalIgnoreCase) != 0;
 											break;
 										case "blackbox":
 											Interface.CurrentOptions.BlackBox = string.Compare(Value, "false", StringComparison.OrdinalIgnoreCase) != 0;
@@ -760,6 +776,7 @@ namespace OpenBve
 			Builder.AppendLine("toppling = " + (CurrentOptions.Toppling ? "true" : "false"));
 			Builder.AppendLine("collisions = " + (CurrentOptions.Collisions ? "true" : "false"));
 			Builder.AppendLine("derailments = " + (CurrentOptions.Derailments ? "true" : "false"));
+			Builder.AppendLine("loadingsway = " + (CurrentOptions.LoadingSway ? "true" : "false"));
 			Builder.AppendLine("blackbox = " + (CurrentOptions.BlackBox ? "true" : "false"));
 			Builder.Append("mode = ");
 			switch (CurrentOptions.GameMode)
@@ -842,7 +859,7 @@ namespace OpenBve
 			{
 				Builder.AppendLine(CurrentOptions.TrainEncodings[i].Codepage.ToString(Culture) + " = " + CurrentOptions.TrainEncodings[i].Value);
 			}
-			string File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "options.cfg");
+			string File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "1.5.0/options.cfg");
 			System.IO.File.WriteAllText(File, Builder.ToString(), new System.Text.UTF8Encoding(true));
 		}
 	}

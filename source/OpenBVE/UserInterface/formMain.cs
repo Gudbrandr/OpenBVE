@@ -396,6 +396,7 @@ namespace OpenBve {
 			checkBoxUnloadTextures.Checked = Interface.CurrentOptions.UnloadUnusedTextures;
 			checkBoxDisableDisplayLists.Checked = Interface.CurrentOptions.DisableDisplayLists;
 			checkboxBlackBox.Checked = Interface.CurrentOptions.BlackBox;
+			checkBoxLoadingSway.Checked = Interface.CurrentOptions.LoadingSway;
 			checkboxJoysticksUsed.Checked = Interface.CurrentOptions.UseJoysticks;
 			checkBoxEBAxis.Checked = Interface.CurrentOptions.AllowAxisEB;
 			{
@@ -529,6 +530,7 @@ namespace OpenBve {
 			checkboxCollisions.Text = Interface.GetInterfaceString("options_misc_simulation_collisions");
 			checkboxDerailments.Text = Interface.GetInterfaceString("options_misc_simulation_derailments");
 			checkboxBlackBox.Text = Interface.GetInterfaceString("options_misc_simulation_blackbox");
+			checkBoxLoadingSway.Text = Interface.GetInterfaceString("options_misc_simulation_loadingsway");
 			//Controls
 			groupboxControls.Text = Interface.GetInterfaceString("options_misc_controls");
 			checkboxJoysticksUsed.Text = Interface.GetInterfaceString("options_misc_controls_joysticks");
@@ -866,6 +868,7 @@ namespace OpenBve {
 			Interface.CurrentOptions.DisableDisplayLists = checkBoxDisableDisplayLists.Checked;
 			Interface.CurrentOptions.GameMode = (Interface.GameMode)comboboxMode.SelectedIndex;
 			Interface.CurrentOptions.BlackBox = checkboxBlackBox.Checked;
+			Interface.CurrentOptions.LoadingSway = checkBoxLoadingSway.Checked;
 			Interface.CurrentOptions.UseJoysticks = checkboxJoysticksUsed.Checked;
 			Interface.CurrentOptions.AllowAxisEB = checkBoxEBAxis.Checked;
 			Interface.CurrentOptions.JoystickAxisThreshold = ((double)trackbarJoystickAxisThreshold.Value - (double)trackbarJoystickAxisThreshold.Minimum) / (double)(trackbarJoystickAxisThreshold.Maximum - trackbarJoystickAxisThreshold.Minimum);
@@ -1336,40 +1339,53 @@ namespace OpenBve {
 
 		// tick
 
+		private JoystickState[] currentJoystickStates;
 
 		private void timerEvents_Tick(object sender, EventArgs e)
 		{
-			Joysticks.RefreshJoysticks();
+			if (currentJoystickStates == null || currentJoystickStates.Length < Joysticks.AttachedJoysticks.Length)
+			{
+				currentJoystickStates = new JoystickState[Joysticks.AttachedJoysticks.Length];
+			}	
 			if (textboxJoystickGrab.Focused & this.Tag == null & listviewControls.SelectedIndices.Count == 1)
 			{
 				int j = listviewControls.SelectedIndices[0];
 				for (int k = 0; k < Joysticks.AttachedJoysticks.Length; k++)
 				{
+					JoystickState s = currentJoystickStates[k];
+					currentJoystickStates[k] = Joystick.GetState(k);
+					if (currentJoystickStates[k].Equals(s))
+					{
+						continue;
+					}
 					int axes = OpenTK.Input.Joystick.GetCapabilities(k).AxisCount;
 					for (int i = 0; i < axes; i++)
 					{
-						double a = OpenTK.Input.Joystick.GetState(k).GetAxis((JoystickAxis)i);
-						if (a < -0.75)
+						if (OpenTK.Input.Joystick.GetState(k).GetAxis((JoystickAxis) i) != s.GetAxis((JoystickAxis) i))
 						{
-							Interface.CurrentControls[j].Device = k;
-							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
-							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = -1;
-							radiobuttonJoystick.Focus();
-							UpdateJoystickDetails();
-							UpdateControlListElement(listviewControls.Items[j], j, true);
-							return;
-						}
-						if (a > 0.75)
-						{
-							Interface.CurrentControls[j].Device = k;
-							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
-							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = 1;
-							radiobuttonJoystick.Focus();
-							UpdateJoystickDetails();
-							UpdateControlListElement(listviewControls.Items[j], j, true);
-							return;
+							double a = OpenTK.Input.Joystick.GetState(k).GetAxis((JoystickAxis)i);
+							if (a < -0.75)
+							{
+								Interface.CurrentControls[j].Device = k;
+								Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
+								Interface.CurrentControls[j].Element = i;
+								Interface.CurrentControls[j].Direction = -1;
+								radiobuttonJoystick.Focus();
+								UpdateJoystickDetails();
+								UpdateControlListElement(listviewControls.Items[j], j, true);
+								return;
+							}
+							if (a > 0.75)
+							{
+								Interface.CurrentControls[j].Device = k;
+								Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
+								Interface.CurrentControls[j].Element = i;
+								Interface.CurrentControls[j].Direction = 1;
+								radiobuttonJoystick.Focus();
+								UpdateJoystickDetails();
+								UpdateControlListElement(listviewControls.Items[j], j, true);
+								return;
+							}
 						}
 					}
 					int buttons = OpenTK.Input.Joystick.GetCapabilities(k).ButtonCount;
