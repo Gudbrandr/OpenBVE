@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{BD5997E4-736B-4FDC-9837-752BA446F78A}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Exe</OutputType>
     <RootNamespace>ObjectBender</RootNamespace>
     <AssemblyName>ObjectBender</AssemblyName>

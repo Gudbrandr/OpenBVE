@@ -90,6 +90,9 @@ TEXTURE_ACE_FILE      :=Data/Plugins/Texture.Ace.dll
 TEXTURE_BGJPT_ROOT    :=source/Plugins/Texture.BmpGifJpegPngTiff
 TEXTURE_BGJPT_FILE    :=Data/Plugins/Texture.BmpGifJpegPngTiff.dll
 
+ROUTE_CHECKER_ROOT    :=source/RouteChecker
+ROUTE_CHECKER_FILE    :=RouteChecker.exe
+
 ROUTE_VIEWER_ROOT     :=source/RouteViewer
 ROUTE_VIEWER_FILE     :=RouteViewer.exe
 
@@ -146,6 +149,7 @@ all-debug: print_csc_type
 all-debug: $(DEBUG_DIR)/$(OPEN_BVE_FILE)
 all-debug: $(DEBUG_DIR)/$(OBJECT_BENDER_FILE)
 all-debug: $(DEBUG_DIR)/$(OBJECT_VIEWER_FILE)
+all-debug: $(DEBUG_DIR)/$(ROUTE_CHECKER_FILE)
 all-debug: $(DEBUG_DIR)/$(ROUTE_VIEWER_FILE)
 all-debug: $(DEBUG_DIR)/$(TRAIN_EDITOR_FILE)
 all-debug: copy_depends
@@ -156,6 +160,7 @@ all-release: OUTPUT_DIR := $(RELEASE_DIR)
 all-release: $(RELEASE_DIR)/$(OPEN_BVE_FILE)
 all-release: $(RELEASE_DIR)/$(OBJECT_BENDER_FILE)
 all-release: $(RELEASE_DIR)/$(OBJECT_VIEWER_FILE)
+all-release: $(RELEASE_DIR)/$(ROUTE_CHECKER_FILE)
 all-release: $(RELEASE_DIR)/$(ROUTE_VIEWER_FILE)
 all-release: $(RELEASE_DIR)/$(TRAIN_EDITOR_FILE)
 all-release: copy_release_depends
@@ -202,6 +207,7 @@ clean:
 	rm -f bin*/ObjectViewer.exe* bin*/ObjectViewer.pdb
 	rm -f bin*/OpenBve.exe* bin*/OpenBve.pdb
 	rm -f bin*/OpenBveObjectValidator.exe* bin*/OpenBveObjectValidator.pdb
+	rm -f bin*/RouteChecker.exe* bin*/RouteChecker.pdb
 	rm -f bin*/RouteViewer.exe* bin*/RouteViewer.pdb
 	rm -f bin*/TrainEditor.exe* bin*/TrainEditor.pdb
 
@@ -441,6 +447,29 @@ $(DEBUG_DIR)/$(TEXTURE_BGJPT_FILE) $(RELEASE_DIR)/$(TEXTURE_BGJPT_FILE): $(TEXTU
 	@$(CSC) /out:$(TEXTURE_BGJPT_OUT) /target:library $(TEXTURE_BGJPT_SRC) $(ARGS) $(TEXTURE_BGJPT_DOC) \
 	/reference:$(OPEN_BVE_API_OUT) $(addprefix /resource:, $(TEXTURE_BGJPT_RESOURCE))
 
+
+###############
+# RouteChecker #
+###############
+
+ROUTE_CHECKER_FOLDERS  := . Parsers Properties System
+ROUTE_CHECKER_FOLDERS  := $(addprefix $(ROUTE_CHECKER_ROOT)/, $(ROUTE_CHECKER_FOLDERS))
+ROUTE_CHECKER_SRC      := $(foreach sdir, $(ROUTE_CHECKER_FOLDERS), $(wildcard $(sdir)/*.cs))
+ROUTE_CHECKER_DOC      := $(addprefix /doc:, $(foreach sdir, $(ROUTE_CHECKER_FOLDERS), $(wildcard $(sdir)/*.xml)))
+ROUTE_CHECKER_RESX     := $(foreach sdir, $(ROUTE_CHECKER_FOLDERS), $(wildcard $(sdir)/*.resx))
+ROUTE_CHECKER_RESOURCE := $(addprefix $(ROUTE_CHECKER_ROOT)/, $(subst /,., $(subst /./,/, $(patsubst source/%.resx, %.resources, $(ROUTE_CHECKER_RESX)))))
+ROUTE_CHECKER_OUT       =$(OUTPUT_DIR)/$(ROUTE_CHECKER_FILE)
+
+$(call create_resource, $(ROUTE_CHECKER_RESOURCE), $(ROUTE_CHECKER_RESX))
+
+$(DEBUG_DIR)/$(ROUTE_CHECKER_FILE): $(DEBUG_DIR)/$(OPEN_BVE_API_FILE)
+$(RELEASE_DIR)/$(ROUTE_CHECKER_FILE): $(RELEASE_DIR)/$(OPEN_BVE_API_FILE)
+
+$(DEBUG_DIR)/$(ROUTE_CHECKER_FILE) $(RELEASE_DIR)/$(ROUTE_CHECKER_FILE): $(ROUTE_CHECKER_SRC) $(ROUTE_CHECKER_RESOURCE)
+	@echo $(COLOR_MAGENTA)Building $(COLOR_CYAN)$(ROUTE_CHECKER_OUT)$(COLOR_END)
+	@$(CSC) /out:$(ROUTE_CHECKER_OUT) /target:winexe /main:OpenBve.Program $(ROUTE_CHECKER_SRC) $(ARGS) $(ROUTE_CHECKER_DOC) \
+	/reference:$(OPEN_BVE_API_OUT) /reference:$(OUTPUT_DIR)/OpenTK \
+	/win32icon:$(ICON) $(addprefix /resource:, $(ROUTE_CHECKER_RESOURCE))
 
 ###############
 # RouteViewer #

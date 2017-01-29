@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectViewer", "source\Obje
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectBender", "source\ObjectBender\ObjectBender.csproj", "{BD5997E4-736B-4FDC-9837-752BA446F78A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteChecker", "source\RouteChecker\RouteChecker.csproj", "{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -170,6 +172,18 @@ Global
 		{BD5997E4-736B-4FDC-9837-752BA446F78A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BD5997E4-736B-4FDC-9837-752BA446F78A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BD5997E4-736B-4FDC-9837-752BA446F78A}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA391532-A6EE-4AC9-AAEC-5E521B6A58E9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
