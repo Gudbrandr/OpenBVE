@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Gudbrandr/OpenBVE.svg?branch=rcbuild)](https://travis-ci.org/Gudbrandr/OpenBVE)
+
 ## openBVE Source Code - Readme
 
 This source code is an experimental port of openBVE to the OpenTK framework. 
