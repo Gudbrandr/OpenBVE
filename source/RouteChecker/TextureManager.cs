@@ -267,6 +267,19 @@ namespace OpenBve
 					Textures[i].Transparency = TextureTransparencyMode.None;
 				}
 				Textures[i].IsRGBA = Textures[i].Transparency != TextureTransparencyMode.None | LoadMode != TextureLoadMode.Normal;
+				//Check that our image is a valid power of two
+				int tw, th;
+				GetImageDimensions(FileName, out tw, out th);
+				int w = Interface.RoundToPowerOfTwo(tw);
+				int h = Interface.RoundToPowerOfTwo(th);
+				if (w != tw)
+				{
+					Interface.AddMessage(Interface.MessageType.Information, false, "The Texture: " + FileName + " has a width of " + tw + " . This is not a valid power of two.");
+				}
+				if (h != th)
+				{
+					Interface.AddMessage(Interface.MessageType.Information, false, "The Texture: " + FileName + " has a height of " + th + " . This is not a valid power of two.");
+				}
 				return i;
 			}
 		}

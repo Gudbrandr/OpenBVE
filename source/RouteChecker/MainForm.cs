@@ -103,9 +103,26 @@ namespace OpenBve
 				bool IsRW = string.Equals(System.IO.Path.GetExtension(strFilePath), ".rw", StringComparison.OrdinalIgnoreCase);
 				CsvRwRouteParser.ParseRoute(strFilePath, IsRW, System.Text.Encoding.UTF8, Application.StartupPath, this.ObjectFolder, this.SoundFolder, false, bDike, bPole, bRail, bWall);
 			}catch(Exception ex){
-				MessageBox.Show("Route Checker has experienced the following error:\n\n" + ex.Message +
-				                "\n\nPlease make sure you are running Route Checker in the OpenBVE directory.",
-				                "Route Checker Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				switch(ex.GetType().ToString())
+				{
+					case "System.TypeLoadException":
+						//Normally caused by attempting to use this in an older openBVE version
+						var ec = ex as System.TypeLoadException;
+						if (ec.TypeName.StartsWith("OpenBveApi"))
+						{
+							MessageBox.Show("Route Checker has failed to load the openBVE API. \n\nPlease make sure that your openBVE version is 1.5.0 or above.", "Route Checker Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						}
+						else
+						{
+							MessageBox.Show("Route Checker has failed to load the following library: \n\n" + ec.TypeName, "Route Checker Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						}
+						break;
+					default:
+						MessageBox.Show("Route Checker has experienced the following error:\n\n" + ex.Message +
+								"\n\nPlease make sure you are running Route Checker in the OpenBVE directory.",
+								"Route Checker Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						break;
+				}
 			}
 	        
 			lvMessages.SmallImageList = new ImageList();
